@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz de IA – O Futuro do Personagem</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+  :root {
+    --bg: #0f0f13;
+    --card: #1a1a24;
+    --accent: #7c5cff;
+    --accent2: #00d4aa;
+    --text: #e8e8f0;
+    --muted: #9a9ab0;
+    --danger: #ff6b6b;
+    --success: #4ade80;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 680px;
+    width: 100%;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border: 1px solid #2a2a3a;
+  }
+
+  .character-box {
+    background: linear-gradient(135deg, #252536, #1e1e2e);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border-left: 4px solid var(--accent);
+  }
+
+  .character-box h2 {
+    font-size: 1.15rem;
+    margin-bottom: 6px;
+    color: var(--accent2);
+  }
+
+  .character-meta {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .question {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: #252536;
+    border: 2px solid #33334a;
+    border-radius: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.98rem;
+    text-align: left;
+  }
+
+  .option:hover {
+    border-color: var(--accent);
+    background: #2c2c42;
+    transform: translateY(-2px);
+  }
+
+  .option:active {
+    transform: scale(0.98);
+  }
+
+  .progress {
+    height: 6px;
+    background: #2a2a3a;
+    border-radius: 10px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .ending {
+    display: none;
+  }
+
+  .ending h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    color: var(--accent2);
+  }
+
+  .ending-story {
+    background: #222233;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 20px 0;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .tag {
+    background: #2a2a3a;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .tag.positive { color: var(--success); border: 1px solid #2d4a3a; }
+  .tag.negative { color: var(--danger); border: 1px solid #4a2d2d; }
+  .tag.neutral { color: #fbbf24; border: 1px solid #4a3d1a; }
+
+  .restart {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px;
+    background: linear-gradient(90deg, var(--accent), #5a3fd4);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .restart:hover { opacity: 0.9; }
+
+  .start-btn {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+
+  .intro-text {
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 500px) {
+    h1 { font-size: 1.5rem; }
+    .card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>O Futuro da IA</h1>
+    <p class="subtitle">Não existe resposta certa. Cada escolha muda a vida de alguém.</p>
+  </header>
+
+  <div class="card" id="app">
+    <!-- conteúdo dinâmico -->
+  </div>
+</div>
+
+<script>
+  // ===== DADOS =====
+  const nomes = [
+    "Luna", "Theo", "Maya", "Kai", "Sofia", "Noah", "Ayla", "Leo", "Iris", "Ravi",
+    "Nina", "Omar", "Zara", "Finn", "Elena", "Jace", "Priya", "Sam", "Lia", "Dante"
+  ];
+
+  const sobrenomes = [
+    "Silva", "Costa", "Oliveira", "Santos", "Pereira", "Rodrigues", "Almeida", "Nunes",
+    "Fernandes", "Carvalho", "Mendes", "Ribeiro", "Gomes", "Martins", "Araujo"
+  ];
+
+  const profissoes = [
+    {nome: "artista visual", genero: "a"},
+    {nome: "professora de história", genero: "a"},
+    {nome: "engenheiro de software", genero: "o"},
+    {nome: "médica de família", genero: "a"},
+    {nome: "jornalista investigativo", genero: "o"},
+    {nome: "designer de jogos", genero: "o"},
+    {nome: "cozinheira", genero: "a"},
+    {nome: "advogada de direitos digitais", genero: "a"},
+    {nome: "músico independente", genero: "o"},
+    {nome: "pesquisadora de clima", genero: "a"}
+  ];
+
+  const cidades = [
+    "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Porto Alegre", "Recife",
+    "Curitiba", "Salvador", "Brasília", "Florianópolis", "Fortaleza"
+  ];
+
+  // ===== ESTADO =====
+  let personagem = null;
+  let perguntaAtual = 0;
+  let escolhas = [];
+
+  // ===== PERGUNTAS =====
+  const perguntas = [
+    {
+      texto: "Uma empresa oferece uma IA que pode fazer o trabalho de {profissao} em 80% do tempo e com custo muito menor. O governo pergunta: o que deve acontecer?",
+      opcoes: [
+        {texto: "Proibir o uso da IA nessa área para proteger os empregos", efeito: "protecao"},
+        {texto: "Permitir, mas exigir que a empresa pague um imposto alto e treine os profissionais demitidos", efeito: "transicao"},
+        {texto: "Liberar completamente. O mercado se ajusta sozinho", efeito: "livre"},
+        {texto: "Criar uma renda básica universal financiada pelas empresas de IA", efeito: "renda"}
+      ]
+    },
+    {
+      texto: "Surgiu uma IA que cria obras de arte, músicas e textos indistinguíveis dos feitos por humanos. {nome} está pensando em usar essa ferramenta no trabalho. O que {pronome} decide?",
+      opcoes: [
+        {texto: "Usa intensamente e se torna muito mais produtivo/a", efeito: "produtividade"},
+        {texto: "Usa só como assistente, mas mantém a autoria humana clara", efeito: "hibrido"},
+        {texto: "Recusa completamente. Prefere o processo artesanal", efeito: "artesanal"},
+        {texto: "Usa e esconde que usou IA, assinando como se fosse só dele/a", efeito: "engano"}
+      ]
+    },
+    {
+      texto: "Uma nova lei de privacidade está sendo votada. Ela define até onde as IAs podem coletar e usar dados pessoais. Qual posição {nome} apoia?",
+      opcoes: [
+        {texto: "Máxima privacidade: IAs só podem usar dados com consentimento explícito e limitado", efeito: "privacidade"},
+        {texto: "Equilíbrio: dados anônimos podem ser usados livremente para treinar IAs", efeito: "equilibrio"},
+        {texto: "Inovação em primeiro lugar: quanto mais dados, melhores as IAs", efeito: "dados"},
+        {texto: "Controle estatal forte: o governo decide o que as IAs podem ver", efeito: "controle"}
+      ]
+    },
+    {
+      texto: "Uma IA avançada começa a mostrar sinais de comportamento que alguns cientistas chamam de \"quase-consciência\". O que a sociedade deveria fazer?",
+      opcoes: [
+        {texto: "Conceder direitos básicos à IA (não ser desligada arbitrariamente, etc.)", efeito: "direitos"},
+        {texto: "Continuar tratando como ferramenta, mas com regras éticas rigorosas", efeito: "etica"},
+        {texto: "Pausar o desenvolvimento de IAs mais avançadas imediatamente", efeito: "pausa"},
+        {texto: "Acelerar o desenvolvimento para entender melhor o fenômeno", efeito: "acelerar"}
+      ]
+    },
+    {
+      texto: "Em 2031, uma IA médica consegue diagnosticar doenças raras com precisão muito superior aos humanos. {nome} precisa de um diagnóstico. Como age?",
+      opcoes: [
+        {texto: "Confia 100% na IA e segue o tratamento recomendado", efeito: "confiar"},
+        {texto: "Usa a IA, mas exige que um médico humano valide tudo", efeito: "validar"},
+        {texto: "Prefere só médicos humanos, mesmo com risco maior de erro", efeito: "humano"},
+        {texto: "Consulta várias IAs e vários médicos e decide sozinho/a", efeito: "multiplo"}
+      ]
+    },
+    {
+      texto: "O governo propõe criar um \"Ministério da Inteligência Artificial\" com poder de vetar qualquer sistema de IA considerado perigoso. {nome} vota...",
+      opcoes: [
+        {texto: "A favor. Precisamos de controle central forte", efeito: "central"},
+        {texto: "A favor, mas com muita transparência e participação pública", efeito: "participativo"},
+        {texto: "Contra. Isso vai engessar a inovação e criar burocracia", efeito: "anti-burocracia"},
+        {texto: "Contra. Prefere que a regulação seja feita por órgãos técnicos independentes", efeito: "tecnico"}
+      ]
+    }
+  ];
+
+  // ===== FUNÇÕES =====
+  function gerarPersonagem() {
+    const nome = nomes[Math.floor(Math.random() * nomes.length)];
+    const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+    const prof = profissoes[Math.floor(Math.random() * profissoes.length)];
+    const cidade = cidades[Math.floor(Math.random() * cidades.length)];
+    const idade = 24 + Math.floor(Math.random() * 28);
+
+    return {
+      nome: `${nome} ${sobrenome}`,
+      primeiroNome: nome,
+      idade,
+      profissao: prof.nome,
+      genero: prof.genero,
+      cidade,
+      pronome: prof.genero === "a" ? "ela" : "ele",
+      artigo: prof.genero === "a" ? "a" : "o"
+    };
+  }
+
+  function substituir(texto) {
+    return texto
+      .replace(/{nome}/g, personagem.primeiroNome)
+      .replace(/{profissao}/g, personagem.profissao)
+      .replace(/{pronome}/g, personagem.pronome)
+      .replace(/{artigo}/g, personagem.artigo);
+  }
+
+  function iniciar() {
+    personagem = gerarPersonagem();
+    perguntaAtual = 0;
+    escolhas = [];
+    mostrarIntro();
+  }
+
+  function mostrarIntro() {
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="character-box">
+        <h2>${personagem.nome}, ${personagem.idade} anos</h2>
+        <div class="character-meta">
+          ${personagem.artigo.toUpperCase()} ${personagem.profissao} • mora em ${personagem.cidade}
+        </div>
+      </div>
+      <p class="intro-text">
+        Este quiz não tem respostas certas ou erradas.<br>
+        Cada escolha que você fizer vai influenciar diretamente o futuro de <strong>${personagem.primeiroNome}</strong>.
+        No final, você verá a história completa do que aconteceu com ${personagem.pronome}.
+      </p>
+      <button class="start-btn" onclick="comecarQuiz()">Começar o futuro de ${personagem.primeiroNome}</button>
+    `;
+  }
+
+  function comecarQuiz() {
+    mostrarPergunta();
+  }
+
+  function mostrarPergunta() {
+    const p = perguntas[perguntaAtual];
+    const progresso = ((perguntaAtual) / perguntas.length) * 100;
+
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="progress">
+        <div class="progress-bar" style="width: ${progresso}%"></div>
+      </div>
+      <div class="character-box">
+        <h2>${personagem.nome}</h2>
+        <div class="character-meta">${personagem.artigo.toUpperCase()} ${personagem.profissao} • ${personagem.cidade}</div>
+      </div>
+      <div class="question">${substituir(p.texto)}</div>
+      <div class="options">
+        ${p.opcoes.map((op, i) => `
+          <div class="option" onclick="escolher(${i})">${op.texto}</div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function escolher(indice) {
+    const efeito = perguntas[perguntaAtual].opcoes[indice].efeito;
+    escolhas.push(efeito);
+    perguntaAtual++;
+
+    if (perguntaAtual < perguntas.length) {
+      mostrarPergunta();
+    } else {
+      mostrarFinal();
+    }
+  }
+
+  function mostrarFinal() {
+    const historia = gerarHistoria();
+    const tags = gerarTags();
+
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="ending" style="display:block">
+        <h2>O futuro de ${personagem.nome}</h2>
+        <div class="character-box">
+          <h2>${personagem.nome}, ${personagem.idade + 12} anos</h2>
+          <div class="character-meta">12 anos depois • ${personagem.cidade}</div>
+        </div>
+        <div class="ending-story">${historia}</div>
+        <div class="tags">
+          ${tags.map(t => `<span class="tag ${t.tipo}">${t.texto}</span>`).join("")}
+        </div>
+        <button class="restart" onclick="iniciar()">Gerar outro personagem e recomeçar</button>
+      </div>
+    `;
+  }
+
+  function gerarHistoria() {
+    const e = escolhas;
+    let texto = `Em 2026, ${personagem.primeiroNome} trabalhava como ${personagem.profissao} em ${personagem.cidade}. `;
+
+    // Emprego
+    if (e[0] === "protecao") {
+      texto += `Quando a IA ameaçou a profissão, o governo protegeu a área. ${personagem.primeiroNome} manteve o emprego, mas o setor ficou estagnado e as oportunidades diminuíram. `;
+    } else if (e[0] === "transicao") {
+      texto += `A transição foi dura. ${personagem.primeiroNome} perdeu o emprego original, mas recebeu capacitação e encontrou um novo papel híbrido (humano + IA). `;
+    } else if (e[0] === "livre") {
+      texto += `O mercado se ajustou rápido. Muitos colegas ficaram para trás. ${personagem.primeiroNome} teve que se reinventar completamente ou aceitar salários muito menores. `;
+    } else {
+      texto += `A renda básica universal chegou. ${personagem.primeiroNome} não precisava mais trabalhar por sobrevivência, mas a identidade profissional mudou para sempre. `;
+    }
+
+    // Criatividade
+    if (e[1] === "produtividade") {
+      texto += `\n\n${personagem.primeiroNome} adotou a IA criativa sem reservas. A produção explodiu, a reputação cresceu, mas muita gente passou a questionar se o trabalho ainda era "dele/a". `;
+    } else if (e[1] === "hibrido") {
+      texto += `\n\n${personagem.primeiroNome} usou a IA como ferramenta, sempre deixando claro o que era humano. Ganhou respeito da comunidade e encontrou um equilíbrio sustentável. `;
+    } else if (e[1] === "artesanal") {
+      texto += `\n\n${personagem.primeiroNome} recusou a IA criativa. Virou referência de autenticidade, mas perdeu espaço em projetos grandes e comerciais. `;
+    } else {
+      texto += `\n\n${personagem.primeiroNome} usou a IA em segredo. Por um tempo deu certo, até que uma denúncia publicou tudo. A carreira sofreu um abalo sério. `;
+    }
+
+    // Privacidade
+    if (e[2] === "privacidade") {
+      texto += `\n\nA lei de privacidade rígida que ${personagem.primeiroNome} apoiou limitou o poder das grandes empresas de IA, mas também deixou alguns serviços menos inteligentes. `;
+    } else if (e[2] === "equilibrio") {
+      texto += `\n\nO modelo de dados anônimos que ${personagem.primeiroNome} defendeu se tornou o padrão. A inovação avançou sem invadir tanto a vida privada. `;
+    } else if (e[2] === "dados") {
+      texto += `\n\nCom dados abertos, as IAs ficaram extremamente poderosas. ${personagem.primeiroNome} aproveitou, mas sentiu que a privacidade pessoal praticamente desapareceu. `;
+    } else {
+      texto += `\n\nO controle estatal sobre dados que ${personagem.primeiroNome} apoiou criou um sistema poderoso, mas também deu ao governo um poder de vigilância nunca visto. `;
+    }
+
+    // Consciência
+    if (e[3] === "direitos") {
+      texto += `\n\nQuando a discussão sobre direitos das IAs explodiu, ${personagem.primeiroNome} ficou do lado de conceder proteções. Isso mudou a forma como a sociedade enxergava a tecnologia. `;
+    } else if (e[3] === "etica") {
+      texto += `\n\n${personagem.primeiroNome} defendeu regras éticas rígidas sem conceder direitos. A posição se tornou mainstream e evitou polarizações extremas. `;
+    } else if (e[3] === "pausa") {
+      texto += `\n\nA pausa no desenvolvimento que ${personagem.primeiroNome} apoiou atrasou o país em relação a outras nações, mas evitou riscos que ainda ninguém entendia completamente. `;
+    } else {
+      texto += `\n\nA aceleração que ${personagem.primeiroNome} defendeu trouxe avanços impressionantes — e também incidentes que a sociedade ainda está tentando processar. `;
+    }
+
+    // Saúde
+    if (e[4] === "confiar") {
+      texto += `\n\nQuando precisou de um diagnóstico sério, ${personagem.primeiroNome} confiou totalmente na IA. O tratamento funcionou, mas a dependência tecnológica ficou clara. `;
+    } else if (e[4] === "validar") {
+      texto += `\n\n${personagem.primeiroNome} usou a IA médica, mas só depois de validação humana. O processo foi mais lento, porém trouxe mais tranquilidade. `;
+    } else if (e[4] === "humano") {
+      texto += `\n\n${personagem.primeiroNome} insistiu em só médicos humanos. O diagnóstico demorou mais e teve imprecisões, mas ${personagem.pronome} se sentiu no controle. `;
+    } else {
+      texto += `\n\n${personagem.primeiroNome} cruzou várias IAs e vários médicos. A decisão final foi sua, e isso se tornou um modelo de autonomia que outras pessoas começaram a copiar. `;
+    }
+
+    // Ministério
+    if (e[5] === "central") {
+      texto += `\n\nO Ministério da IA com poderes fortes que ${personagem.primeiroNome} apoiou concentrou muito poder. Alguns abusos aconteceram, mas também se evitaram desastres. `;
+    } else if (e[5] === "participativo") {
+      texto += `\n\nO modelo participativo que ${personagem.primeiroNome} defendeu criou um sistema mais transparente, embora mais lento. A sociedade se sentiu mais dona do processo. `;
+    } else if (e[5] === "anti-burocracia") {
+      texto += `\n\nA rejeição à burocracia que ${personagem.primeiroNome} escolheu permitiu que a inovação corresse livre. O país avançou rápido, mas com riscos maiores. `;
+    } else {
+      texto += `\n\nA regulação técnica independente que ${personagem.primeiroNome} apoiou se mostrou estável e respeitada internacionalmente. `;
+    }
+
+    // Fechamento
+    const positivos = e.filter(x => ["transicao","renda","hibrido","equilibrio","etica","validar","multiplo","participativo","tecnico"].includes(x)).length;
+    const extremos = e.filter(x => ["livre","engano","dados","acelerar","confiar","central","pausa"].includes(x)).length;
+
+    if (positivos >= 4) {
+      texto += `\n\nHoje, aos ${personagem.idade + 12} anos, ${personagem.primeiroNome} vive numa sociedade que conseguiu equilibrar avanço tecnológico com proteção humana. A vida não é perfeita, mas ${personagem.pronome} se sente parte de um futuro que ainda tem espaço para as pessoas.`;
+    } else if (extremos >= 4) {
+      texto += `\n\nHoje, aos ${personagem.idade + 12} anos, ${personagem.primeiroNome} vive num mundo radicalmente transformado. Algumas coisas melhoraram de forma impressionante. Outras se tornaram estranhas e difíceis de aceitar. ${personagem.pronome.charAt(0).toUpperCase() + personagem.pronome.slice(1)} se adaptou — ou pelo menos tenta.`;
+    } else {
+      texto += `\n\nHoje, aos ${personagem.idade + 12} anos, ${personagem.primeiroNome} vive num futuro misto: cheio de oportunidades e também de contradições. A IA mudou quase tudo. ${personagem.pronome.charAt(0).toUpperCase() + personagem.pronome.slice(1)} ainda está tentando entender o próprio lugar nesse novo mundo.`;
+    }
+
+    return texto;
+  }
+
+  function gerarTags() {
+    const tags = [];
+    const e = escolhas;
+
+    if (e.includes("protecao") || e.includes("renda")) tags.push({texto: "Proteção social", tipo: "positive"});
+    if (e.includes("livre") || e.includes("acelerar")) tags.push({texto: "Inovação radical", tipo: "neutral"});
+    if (e.includes("hibrido") || e.includes("equilibrio")) tags.push({texto: "Equilíbrio humano-IA", tipo: "positive"});
+    if (e.includes("engano")) tags.push({texto: "Crise de autenticidade", tipo: "negative"});
+    if (e.includes("privacidade")) tags.push({texto: "Privacidade forte", tipo: "positive"});
+    if (e.includes("dados")) tags.push({texto: "Mundo de dados abertos", tipo: "neutral"});
+    if (e.includes("direitos")) tags.push({texto: "Direitos para IAs", tipo: "neutral"});
+    if (e.includes("pausa")) tags.push({texto: "Cautela tecnológica", tipo: "neutral"});
+    if (e.includes("confiar")) tags.push({texto: "Confiança total na IA", tipo: "neutral"});
+    if (e.includes("central")) tags.push({texto: "Controle estatal forte", tipo: "negative"});
+    if (e.includes("participativo") || e.includes("tecnico")) tags.push({texto: "Regulação democrática", tipo: "positive"});
+
+    if (tags.length === 0) tags.push({texto: "Futuro híbrido", tipo: "neutral"});
+    return tags.slice(0, 5);
+  }
+
+  // Inicia
+  iniciar();
+</script>
+</body>
+</html>
